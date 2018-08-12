@@ -3,7 +3,7 @@
 
 const char *PATH = "/data/data/com.example.chen.servicealivetest/keep_alive.socket";
 const char *userId;
-int m_child_fd;
+int m_client_fd;
 extern "C"
 JNIEXPORT void JNICALL Java_com_example_chen_servicealivetest_KeepService_createWatcher(
         JNIEnv *env,
@@ -58,8 +58,8 @@ int child_create_socket() {
                 return 0;
             }
         }
-        m_child_fd = coonfd;
-        LOGI("服务端连接成功，客户端的 fd %d", m_child_fd);
+        m_client_fd = coonfd;
+        LOGI("服务端连接成功，客户端的 fd %d", m_client_fd);
         break;
     }
     return 1;
@@ -74,15 +74,15 @@ void child_listen_socket() {
         //所有位置0
         FD_ZERO(&fds);
         //指定位上的值置为1,
-        FD_SET(m_child_fd, &fds);
+        FD_SET(m_client_fd, &fds);
         //最长等待时间10s，timeout为null，表示一直阻塞直到收到客户端的消息
-        int r = select(m_child_fd + 1, &fds, NULL, NULL, &timeout);
+        int r = select(m_client_fd + 1, &fds, NULL, NULL, &timeout);
         LOGI("读取消息前 select %d", r);
         if (r > 0) {
             char pkg[256] = {0};
-            if (FD_ISSET(m_child_fd, &fds)) {
+            if (FD_ISSET(m_client_fd, &fds)) {
                 //如果阻塞结束，说明客户端进程被kill
-                int result = read(m_child_fd, pkg, sizeof(pkg));
+                int result = read(m_client_fd, pkg, sizeof(pkg));
                 LOGE("服务端开始重启服务");
 
                 //api<17
