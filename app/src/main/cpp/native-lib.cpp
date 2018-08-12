@@ -91,6 +91,10 @@ void child_listen_socket() {
                        (char *) NULL);*/
 
                 //>=api17  不过好像两种 api 这种方式都能启动服务
+                //执行linux命令：这里是开启一个service
+                //am startservice -n com.example.chen.servicealivetest/com.example.chen.servicealivetest.KeepService
+                //execlp()会从PATH 环境变量所指的目录中查找符合参数file的文件名, 找到后便执行该文件,
+                //然后将第二个以后的参数当做该文件的argv[0]、argv[1]……, 最后一个参数必须用空指针(NULL)作结束。
                 execlp("am", "am", "startservice", "--user", userId, "-n"
                                "com.example.chen.servicealivetest/com.example.chen.servicealivetest.KeepService",
                        (char *) NULL);
